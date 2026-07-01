@@ -1,5 +1,5 @@
 import multer from 'multer'
-import type { Request } from 'express'
+import type { Request, RequestHandler } from 'express'
 import { AppError } from './errorHandler.middleware'
 
 const memoryStorage = multer.memoryStorage()
@@ -21,23 +21,23 @@ function createUploader(
   allowedMimeTypes: string[],
   typeLabel: string,
   maxSizeMb: number
-) {
+) : RequestHandler {
   return multer({
     storage: memoryStorage,
     limits: {
       fileSize: maxSizeMb * 1024 * 1024,
     },
     fileFilter: fileFilter(allowedMimeTypes, typeLabel),
-  }).single(typeLabel)
+  }).single(typeLabel) as RequestHandler
 }
 
-export const videoUpload = createUploader(
+export const videoUpload: RequestHandler = createUploader(
   ['video/mp4', 'video/webm', 'video/quicktime'],
   'video',
   500
 )
 
-export const imageUpload = createUploader(
+export const imageUpload: RequestHandler = createUploader(
   ['image/jpeg', 'image/png', 'image/webp'],
   'image',
   5

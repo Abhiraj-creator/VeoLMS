@@ -45,13 +45,13 @@
 - [x] src/dao/lesson.dao.ts
 - [x] src/services/course.service.ts
 - [x] Controllers + routes
-- [ ] src/utils/cloudinary.utils.ts
+- [x] src/utils/cloudinary.utils.ts
 
 ## Phase 5 - Upload System
-- [ ] src/middleware/upload.middleware.ts
-- [ ] src/services/upload.service.ts
-- [ ] src/controllers/upload.controller.ts
-- [ ] src/routes/upload.routes.ts
+- [x] src/middleware/upload.middleware.ts
+- [x] src/services/upload.service.ts
+- [x] src/controllers/upload.controller.ts
+- [x] src/routes/upload.routes.ts
 
 ## Phase 6 - Payment System
 - [ ] src/models/enrollment.model.ts
