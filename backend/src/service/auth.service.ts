@@ -23,8 +23,27 @@ const REFRESH_COOKIE_OPTIONS = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 }
 
+const ACCESS_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: config.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  maxAge: 15 * 60 * 1000, // 15 minutes
+}
+
+function setAccessCookie(res: Response, token: string): void {
+  res.cookie('accessToken', token, ACCESS_COOKIE_OPTIONS)
+}
+
 function setRefreshCookie(res: Response, token: string): void {
   res.cookie('refreshToken', token, REFRESH_COOKIE_OPTIONS)
+}
+
+function clearAccessCookie(res: Response): void {
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+    sameSite: 'strict',
+  })
 }
 
 function clearRefreshCookie(res: Response): void {
@@ -69,7 +88,10 @@ export class AuthService {
     const accessToken = signAccessToken(user._id, user.role)
     const refreshToken = signRefreshToken(user._id)
 
-    if (res) setRefreshCookie(res, refreshToken)
+    if (res) {
+      setAccessCookie(res, accessToken)
+      setRefreshCookie(res, refreshToken)
+    }
 
     const userObj = user.toObject() as Omit<IUser, 'passwordHash'>
     return { user: userObj, accessToken }
@@ -104,20 +126,39 @@ export class AuthService {
     const accessToken = signAccessToken(user._id, user.role)
     const refreshToken = signRefreshToken(user._id)
 
-    if (res) setRefreshCookie(res, refreshToken)
+    if (res) {
+      setAccessCookie(res, accessToken)
+      setRefreshCookie(res, refreshToken)
+    }
 
     const userObj = user.toObject() as Omit<IUser, 'passwordHash'>
     delete (userObj as Record<string, unknown>)['passwordHash']
     return { user: userObj, accessToken }
   }
 
-  static async logout(accessToken: string, res?: Response): Promise<void> {
-    const ttl = getTokenTTL(accessToken)
-    if (ttl > 0) {
-      // Blacklist the token until it naturally expires
-      await redis.setex(`bl_${accessToken}`, ttl, '1')
+  static async logout(
+    accessToken: string,
+    refreshToken?: string,
+    res?: Response
+  ): Promise<void> {
+    const accessTtl = getTokenTTL(accessToken)
+    if (accessTtl > 0) {
+      // Blacklist the access token until it naturally expires
+      await redis.setex(`bl_${accessToken}`, accessTtl, '1')
     }
-    if (res) clearRefreshCookie(res)
+
+    if (refreshToken) {
+      const refreshTtl = getTokenTTL(refreshToken)
+      if (refreshTtl > 0) {
+        // Revoke the refresh token too, so the session cannot be renewed
+        await redis.setex(`bl_${refreshToken}`, refreshTtl, '1')
+      }
+    }
+
+    if (res) {
+      clearAccessCookie(res)
+      clearRefreshCookie(res)
+    }
   }
 
   static async refreshToken(refreshTokenCookie: string, res?: Response): Promise<string> {

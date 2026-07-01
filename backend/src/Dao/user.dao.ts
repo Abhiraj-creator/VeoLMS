@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import  FilterQuery,{type QueryFilter}  from 'mongoose'
+import type { QueryFilter } from 'mongoose';
 import { User, IUser } from '../models/user.model'
 
 export class UserDAO {
@@ -32,7 +32,11 @@ export class UserDAO {
     id: string | mongoose.Types.ObjectId,
     data: Partial<Pick<IUser, 'name' | 'avatar' | 'isActive'>>
   ): Promise<IUser | null> {
-    return User.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true }).exec()
+    return User.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { returnDocument: 'after', runValidators: true }
+    ).exec()
   }
 
   static async findAllStudents(
@@ -40,7 +44,7 @@ export class UserDAO {
     page: number = 1,
     limit: number = 20
   ): Promise<{ users: IUser[]; total: number }> {
-    const filter: FilterQuery<IUser> = { role: 'student', isActive: true }
+    const filter: QueryFilter<IUser> = { role: 'student', isActive: true }
 
     if (query) {
       filter.$or = [

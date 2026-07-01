@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import mongoose from 'mongoose'
+import multer from 'multer'
 import { config } from '../config/config'
 
 // ─────────────────────────────────────────────
@@ -90,6 +91,19 @@ export function globalErrorHandler(
       success: false,
       message: 'Validation failed',
       errors,
+    })
+    return
+  }
+
+  // Handle Multer upload errors
+  if (err instanceof multer.MulterError) {
+    const message =
+      err.code === 'LIMIT_FILE_SIZE'
+        ? 'File size exceeds the allowed limit'
+        : err.message
+    res.status(400).json({
+      success: false,
+      message,
     })
     return
   }

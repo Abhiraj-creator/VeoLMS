@@ -15,6 +15,7 @@
     "noUncheckedIndexedAccess": false,
     "exactOptionalPropertyTypes": false,
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "types": ["node"],
     "composite": false
   },

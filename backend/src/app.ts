@@ -72,7 +72,7 @@ app.use(mongoSanitize())
 // ─────────────────────────────────────────────
 // 6. General rate limiting
 // ─────────────────────────────────────────────
-app.use(generalRateLimit)
+// app.use(generalRateLimit)
 
 // ─────────────────────────────────────────────
 // 7. Health check route

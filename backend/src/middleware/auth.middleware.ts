@@ -5,17 +5,16 @@ import { verifyAccessToken } from '../utils/jwt.utils'
 import { UnauthorizedError, ForbiddenError } from './errorHandler.middleware'
 
 /**
- * requireAuth — extracts Bearer token, checks Redis blacklist, verifies JWT,
+ * requireAuth — extracts a Bearer token only, checks Redis blacklist, verifies JWT,
  * attaches req.user = { _id, role }
  */
 export async function requireAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
   try {
     const authHeader = req.headers.authorization
-    if (!authHeader?.startsWith('Bearer ')) {
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    if (!token) {
       throw new UnauthorizedError('No authentication token provided')
     }
-
-    const token = authHeader.slice(7)
 
     // Check Redis blacklist
     const isBlacklisted = await redis.get(`bl_${token}`)
@@ -73,11 +72,11 @@ export async function optionalAuth(
 ): Promise<void> {
   try {
     const authHeader = req.headers.authorization
-    if (!authHeader?.startsWith('Bearer ')) {
+    const cookieToken = req.cookies?.accessToken as string | undefined
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : cookieToken
+    if (!token) {
       return next() // No token — proceed without user
     }
-
-    const token = authHeader.slice(7)
     const isBlacklisted = await redis.get(`bl_${token}`)
     if (isBlacklisted) {
       return next() // Blacklisted — treat as unauthenticated
