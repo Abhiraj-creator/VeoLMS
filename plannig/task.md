@@ -72,8 +72,8 @@
 - [x] Controllers + routes
 
 ## Phase 8 - Admin APIs + Seed Script
-- [ ] src/services/admin.service.ts
-- [ ] src/controllers/admin.controller.ts
-- [ ] src/routes/admin.routes.ts
-- [ ] src/seeds/data/courses.data.ts
-- [ ] src/seeds/index.ts
+- [x] src/services/admin.service.ts
+- [x] src/controllers/admin.controller.ts
+- [x] src/routes/admin.routes.ts
+- [x] src/seeds/data/courses.data.ts
+- [x] src/seeds/index.ts
