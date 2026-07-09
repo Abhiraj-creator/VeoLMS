@@ -7,6 +7,7 @@ import uploadRouter from './upload.routes'
 import paymentRouter from './payment.routes'
 import enrollmentRouter from './enrollment.routes'
 import progressRouter from './progress.routes'
+import adminRouter from './admin.routes'
 
 const router:Router = Router()
 
@@ -18,6 +19,6 @@ router.use('/upload', uploadRouter)
 router.use('/payments', paymentRouter)
 router.use('/enrollments', enrollmentRouter)
 router.use('/progress', progressRouter)
-// router.use('/admin', adminRouter)
+router.use('/admin', adminRouter)
 
 export default router
