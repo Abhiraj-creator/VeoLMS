@@ -1,13 +1,21 @@
 import mongoose from 'mongoose'
 import { Course, type ICourse } from '../models/course.model'
+import { Lesson } from '../models/lesson.model'
+import { Section } from '../models/section.model'
 
 export class CourseDAO {
   static create(data: {
     title: string
     slug: string
+    category?: 'Frontend' | 'Backend' | 'Fullstack' | 'Other'
+    shortDescription?: string
     description: string
     thumbnailUrl?: string | null
     thumbnailPublicId?: string | null
+    price?: number
+    totalDuration?: number
+    totalLessons?: number
+    tags?: string[]
     isPublished?: boolean
     createdBy: mongoose.Types.ObjectId
   }): Promise<ICourse> {
@@ -34,9 +42,35 @@ export class CourseDAO {
 
   static updateById(
     id: string | mongoose.Types.ObjectId,
-    data: Partial<Pick<ICourse, 'title' | 'slug' | 'description' | 'thumbnailUrl' | 'thumbnailPublicId' | 'isPublished'>>
+    data: Partial<Pick<ICourse, 'title' | 'slug' | 'category' | 'shortDescription' | 'description' | 'thumbnailUrl' | 'thumbnailPublicId' | 'price' | 'totalDuration' | 'totalLessons' | 'tags' | 'isPublished'>>
   ): Promise<ICourse | null> {
     return Course.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after', runValidators: true }).exec()
+  }
+
+  static async updateCache(courseId: string | mongoose.Types.ObjectId): Promise<ICourse | null> {
+    const sections = await Section.find({ courseId }).select('_id').exec()
+    const sectionIds = sections.map((section) => section._id)
+    const [stats] = await Lesson.aggregate<{ totalLessons: number; totalDuration: number }>([
+      { $match: { sectionId: { $in: sectionIds } } },
+      {
+        $group: {
+          _id: null,
+          totalLessons: { $sum: 1 },
+          totalDuration: { $sum: '$duration' },
+        },
+      },
+    ])
+
+    return Course.findByIdAndUpdate(
+      courseId,
+      {
+        $set: {
+          totalLessons: stats?.totalLessons ?? 0,
+          totalDuration: stats?.totalDuration ?? 0,
+        },
+      },
+      { returnDocument: 'after', runValidators: true }
+    ).exec()
   }
 
   static deleteById(id: string | mongoose.Types.ObjectId): Promise<ICourse | null> {

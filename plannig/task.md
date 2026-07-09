@@ -56,20 +56,20 @@
 - [x] Integrate lesson create/update with multipart video upload
 
 ## Phase 6 - Payment System
-- [ ] src/models/enrollment.model.ts
-- [ ] src/validators/payment.validators.ts
-- [ ] src/dao/enrollment.dao.ts
-- [ ] src/services/payment.service.ts
-- [ ] src/controllers/payment.controller.ts
-- [ ] src/routes/payment.routes.ts
+- [x] src/models/enrollment.model.ts
+- [x] src/validators/payment.validators.ts
+- [x] src/dao/enrollment.dao.ts
+- [x] src/services/payment.service.ts
+- [x] src/controllers/payment.controller.ts
+- [x] src/routes/payment.routes.ts
 
 ## Phase 7 - Enrollment + Progress APIs
-- [ ] src/models/progress.model.ts
-- [ ] src/validators/progress.validators.ts
-- [ ] src/dao/progress.dao.ts
-- [ ] src/services/progress.service.ts
-- [ ] src/services/enrollment.service.ts
-- [ ] Controllers + routes
+- [x] src/models/progress.model.ts
+- [x] src/validators/progress.validators.ts
+- [x] src/dao/progress.dao.ts
+- [x] src/services/progress.service.ts
+- [x] src/services/enrollment.service.ts
+- [x] Controllers + routes
 
 ## Phase 8 - Admin APIs + Seed Script
 - [ ] src/services/admin.service.ts

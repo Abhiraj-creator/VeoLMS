@@ -20,27 +20,57 @@ function numberFromFormData(schema: z.ZodType<number>) {
   }, schema)
 }
 
+function optionalNumberFromFormData(schema: z.ZodType<number | undefined>) {
+  return z.preprocess((value) => {
+    if (typeof value === 'string' && value.trim() !== '') {
+      const parsed = Number(value)
+      return Number.isNaN(parsed) ? value : parsed
+    }
+    return value
+  }, schema)
+}
+
 const slugSchema = z
   .string()
   .min(3, 'Slug must be at least 3 characters')
   .max(140, 'Slug must be at most 140 characters')
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug may only contain lowercase letters, numbers, and hyphens')
 
+const categorySchema = z.enum(['Frontend', 'Backend', 'Fullstack', 'Other'])
+
+const tagsSchema = z.preprocess((value) => {
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+  }
+  return value
+}, z.array(z.string().min(1)).optional())
+
 export const  createCourseSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(120).trim(),
   slug: slugSchema,
+  category: categorySchema.optional(),
+  shortDescription: z.string().max(160).trim().optional(),
   description: z.string().min(10, 'Description must be at least 10 characters').max(2000).trim(),
   thumbnailUrl: z.string().url('Thumbnail must be a valid URL').optional().nullable(),
   thumbnailPublicId: z.string().min(1).optional().nullable(),
+  price: optionalNumberFromFormData(z.number().min(0).optional()),
+  tags: tagsSchema,
   isPublished: booleanFromFormData(z.boolean().optional()),
 })
 
 export const updateCourseSchema = z.object({
   title: z.string().min(3).max(120).trim().optional(),
   slug: slugSchema.optional(),
+  category: categorySchema.optional(),
+  shortDescription: z.string().max(160).trim().optional(),
   description: z.string().min(10).max(2000).trim().optional(),
   thumbnailUrl: z.string().url('Thumbnail must be a valid URL').optional().nullable(),
   thumbnailPublicId: z.string().min(1).optional().nullable(),
+  price: optionalNumberFromFormData(z.number().min(0).optional()),
+  tags: tagsSchema,
   isPublished: booleanFromFormData(z.boolean().optional()),
 })
 
@@ -63,7 +93,9 @@ export const createLessonSchema = z.object({
   content: z.string().min(1, 'Content is required').max(10000).trim(),
   videoUrl: z.string().url('Video URL must be a valid URL').optional().nullable(),
   cloudinaryPublicId: z.string().min(1).optional().nullable(),
+  duration: optionalNumberFromFormData(z.number().min(0).optional()),
   order: numberFromFormData(z.number().int().positive()),
+  isPreview: booleanFromFormData(z.boolean().optional()),
   isPublished: booleanFromFormData(z.boolean().optional()),
 })
 
@@ -72,7 +104,9 @@ export const updateLessonSchema = z.object({
   content: z.string().min(1).max(10000).trim().optional(),
   videoUrl: z.string().url('Video URL must be a valid URL').optional().nullable(),
   cloudinaryPublicId: z.string().min(1).optional().nullable(),
+  duration: optionalNumberFromFormData(z.number().min(0).optional()),
   order: numberFromFormData(z.number().int().positive()).optional(),
+  isPreview: booleanFromFormData(z.boolean().optional()),
   isPublished: booleanFromFormData(z.boolean().optional()),
 })
 

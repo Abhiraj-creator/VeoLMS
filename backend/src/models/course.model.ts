@@ -4,9 +4,15 @@ export interface ICourse extends Document {
   _id: mongoose.Types.ObjectId
   title: string
   slug: string
+  category: 'Frontend' | 'Backend' | 'Fullstack' | 'Other'
+  shortDescription: string
   description: string
   thumbnailUrl: string | null
   thumbnailPublicId: string | null
+  price: number
+  totalDuration: number
+  totalLessons: number
+  tags: string[]
   isPublished: boolean
   createdBy: mongoose.Types.ObjectId
   createdAt: Date
@@ -30,6 +36,18 @@ const courseSchema = new Schema<ICourse>(
       unique: true,
       index: true,
     },
+    category: {
+      type: String,
+      enum: ['Frontend', 'Backend', 'Fullstack', 'Other'],
+      default: 'Other',
+      index: true,
+    },
+    shortDescription: {
+      type: String,
+      trim: true,
+      maxlength: 160,
+      default: '',
+    },
     description: {
       type: String,
       required: [true, 'Course description is required'],
@@ -44,6 +62,25 @@ const courseSchema = new Schema<ICourse>(
     thumbnailPublicId: {
       type: String,
       default: null,
+    },
+    price: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    totalDuration: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    totalLessons: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    tags: {
+      type: [String],
+      default: [],
     },
     isPublished: {
       type: Boolean,
@@ -60,6 +97,8 @@ const courseSchema = new Schema<ICourse>(
   }
 )
 
+courseSchema.index({ title: 'text', tags: 'text' })
+courseSchema.index({ category: 1, isPublished: 1 })
 courseSchema.index({ isPublished: 1, createdAt: -1 })
 
 export const Course = mongoose.model<ICourse>('Course', courseSchema)

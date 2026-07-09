@@ -7,7 +7,9 @@ export interface ILesson extends Document {
   content: string
   videoUrl: string | null
   cloudinaryPublicId: string | null
+  duration: number
   order: number
+  isPreview: boolean
   isPublished: boolean
   createdAt: Date
   updatedAt: Date
@@ -43,10 +45,19 @@ const lessonSchema = new Schema<ILesson>(
       type: String,
       default: null,
     },
+    duration: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     order: {
       type: Number,
       required: true,
       min: 1,
+    },
+    isPreview: {
+      type: Boolean,
+      default: false,
     },
     isPublished: {
       type: Boolean,

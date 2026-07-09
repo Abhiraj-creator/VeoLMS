@@ -8,7 +8,9 @@ export class LessonDAO {
     content: string
     videoUrl?: string | null
     cloudinaryPublicId?: string | null
+    duration?: number
     order: number
+    isPreview?: boolean
     isPublished?: boolean
   }): Promise<ILesson> {
     return Lesson.create(data)
@@ -26,9 +28,13 @@ export class LessonDAO {
     return Lesson.find(filter).sort({ order: 1 }).exec()
   }
 
+  static countBySection(sectionId: string | mongoose.Types.ObjectId): Promise<number> {
+    return Lesson.countDocuments({ sectionId }).exec()
+  }
+
   static updateById(
     id: string | mongoose.Types.ObjectId,
-    data: Partial<Pick<ILesson, 'title' | 'content' | 'videoUrl' | 'cloudinaryPublicId' | 'order' | 'isPublished'>>
+    data: Partial<Pick<ILesson, 'title' | 'content' | 'videoUrl' | 'cloudinaryPublicId' | 'duration' | 'order' | 'isPreview' | 'isPublished'>>
   ): Promise<ILesson | null> {
     return Lesson.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after', runValidators: true }).exec()
   }
