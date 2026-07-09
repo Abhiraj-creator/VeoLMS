@@ -6,6 +6,7 @@ export interface ICourse extends Document {
   slug: string
   description: string
   thumbnailUrl: string | null
+  thumbnailPublicId: string | null
   isPublished: boolean
   createdBy: mongoose.Types.ObjectId
   createdAt: Date
@@ -37,6 +38,10 @@ const courseSchema = new Schema<ICourse>(
       maxlength: 2000,
     },
     thumbnailUrl: {
+      type: String,
+      default: null,
+    },
+    thumbnailPublicId: {
       type: String,
       default: null,
     },

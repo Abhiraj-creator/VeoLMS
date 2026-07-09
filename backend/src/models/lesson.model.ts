@@ -6,6 +6,7 @@ export interface ILesson extends Document {
   title: string
   content: string
   videoUrl: string | null
+  cloudinaryPublicId: string | null
   order: number
   isPublished: boolean
   createdAt: Date
@@ -35,6 +36,10 @@ const lessonSchema = new Schema<ILesson>(
       maxlength: 10000,
     },
     videoUrl: {
+      type: String,
+      default: null,
+    },
+    cloudinaryPublicId: {
       type: String,
       default: null,
     },

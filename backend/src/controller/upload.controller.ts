@@ -10,7 +10,7 @@ export const uploadVideo: RequestHandler = asyncHandler(async (req: Request, res
   }
 
   const video = await UploadService.uploadVideo(req.file.buffer, req.file.mimetype)
-  sendSuccess(res, { video }, 'Video uploaded successfully', 200)
+  sendSuccess(res, video, 'Video uploaded successfully', 200)
 })
 
 export const uploadImage: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
@@ -19,5 +19,5 @@ export const uploadImage: RequestHandler = asyncHandler(async (req: Request, res
   }
 
   const image = await UploadService.uploadImage(req.file.buffer, req.file.mimetype)
-  sendSuccess(res, { image }, 'Image uploaded successfully', 200)
+  sendSuccess(res, image, 'Image uploaded successfully', 200)
 })

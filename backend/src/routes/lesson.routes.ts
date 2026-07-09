@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { requireAuth } from '../middleware/auth.middleware'
+import { videoUpload } from '../middleware/upload.middleware'
 import { validate } from '../middleware/validate.middleware'
 import {
   createLessonSchema,
@@ -15,8 +16,8 @@ import {
 const router: import('express').Router = Router()
 
 router.get('/section/:sectionId', requireAuth, listLessons)
-router.post('/', requireAuth, validate(createLessonSchema), createLesson)
-router.patch('/:lessonId', requireAuth, validate(updateLessonSchema), updateLesson)
+router.post('/', requireAuth, videoUpload, validate(createLessonSchema), createLesson)
+router.patch('/:lessonId', requireAuth, videoUpload, validate(updateLessonSchema), updateLesson)
 router.delete('/:lessonId', requireAuth, deleteLesson)
 
 export default router

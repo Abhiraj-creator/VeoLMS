@@ -7,6 +7,7 @@ export class LessonDAO {
     title: string
     content: string
     videoUrl?: string | null
+    cloudinaryPublicId?: string | null
     order: number
     isPublished?: boolean
   }): Promise<ILesson> {
@@ -27,7 +28,7 @@ export class LessonDAO {
 
   static updateById(
     id: string | mongoose.Types.ObjectId,
-    data: Partial<Pick<ILesson, 'title' | 'content' | 'videoUrl' | 'order' | 'isPublished'>>
+    data: Partial<Pick<ILesson, 'title' | 'content' | 'videoUrl' | 'cloudinaryPublicId' | 'order' | 'isPublished'>>
   ): Promise<ILesson | null> {
     return Lesson.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after', runValidators: true }).exec()
   }

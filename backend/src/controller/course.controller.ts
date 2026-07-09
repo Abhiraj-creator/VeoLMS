@@ -2,12 +2,24 @@ import type { Request, Response, RequestHandler } from 'express'
 import { asyncHandler } from '../utils/asyncHandler'
 import { sendSuccess } from '../utils/apiResponse'
 import { CourseService } from '../service/course.service'
+import { UploadService } from '../service/upload.service'
 
 function paramValue(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] : value ?? ''
 }
 
+async function applyCourseThumbnail(req: Request): Promise<void> {
+  if (!req.file) {
+    return
+  }
+
+  const uploaded = await UploadService.uploadImage(req.file.buffer, req.file.mimetype)
+  req.body.thumbnailUrl = uploaded.url
+  req.body.thumbnailPublicId = uploaded.publicId
+}
+
 export const createCourse: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  await applyCourseThumbnail(req)
   const course = await CourseService.createCourse(req.user!.role, req.user!._id, req.body)
   sendSuccess(res, { course }, 'Course created successfully', 201)
 })
@@ -26,6 +38,7 @@ export const getCourse: RequestHandler = asyncHandler(async (req: Request, res: 
 })
 
 export const updateCourse: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  await applyCourseThumbnail(req)
   const course = await CourseService.updateCourse(req.user!.role, paramValue(req.params.courseId), req.body)
   sendSuccess(res, { course }, 'Course updated successfully')
 })

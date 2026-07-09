@@ -52,6 +52,8 @@
 - [x] src/services/upload.service.ts
 - [x] src/controllers/upload.controller.ts
 - [x] src/routes/upload.routes.ts
+- [x] Integrate course create/update with multipart thumbnail upload
+- [x] Integrate lesson create/update with multipart video upload
 
 ## Phase 6 - Payment System
 - [ ] src/models/enrollment.model.ts

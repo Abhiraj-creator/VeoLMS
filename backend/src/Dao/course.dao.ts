@@ -7,6 +7,7 @@ export class CourseDAO {
     slug: string
     description: string
     thumbnailUrl?: string | null
+    thumbnailPublicId?: string | null
     isPublished?: boolean
     createdBy: mongoose.Types.ObjectId
   }): Promise<ICourse> {
@@ -33,7 +34,7 @@ export class CourseDAO {
 
   static updateById(
     id: string | mongoose.Types.ObjectId,
-    data: Partial<Pick<ICourse, 'title' | 'slug' | 'description' | 'thumbnailUrl' | 'isPublished'>>
+    data: Partial<Pick<ICourse, 'title' | 'slug' | 'description' | 'thumbnailUrl' | 'thumbnailPublicId' | 'isPublished'>>
   ): Promise<ICourse | null> {
     return Course.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after', runValidators: true }).exec()
   }

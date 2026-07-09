@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { requireAuth } from '../middleware/auth.middleware'
+import { imageUpload } from '../middleware/upload.middleware'
 import { validate } from '../middleware/validate.middleware'
 import {
   createCourseSchema,
@@ -17,8 +18,8 @@ const router:Router = Router()
 
 router.get('/', requireAuth, listCourses)
 router.get('/:courseId', requireAuth, getCourse)
-router.post('/', requireAuth, validate(createCourseSchema), createCourse)
-router.patch('/:courseId', requireAuth, validate(updateCourseSchema), updateCourse)
+router.post('/', requireAuth, imageUpload, validate(createCourseSchema), createCourse)
+router.patch('/:courseId', requireAuth, imageUpload, validate(updateCourseSchema), updateCourse)
 router.delete('/:courseId', requireAuth, deleteCourse)
 
 export default router
