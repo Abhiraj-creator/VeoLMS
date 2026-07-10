@@ -43,3 +43,13 @@ export function uploadBufferToCloudinary(
     streamifier.createReadStream(buffer).pipe(uploadStream)
   })
 }
+
+export function generateSignedVideoUrl(publicId: string, expiresInSeconds = 3600): string {
+  return cloudinary.url(publicId, {
+    resource_type: 'video',
+    sign_url: true,
+    secure: true,
+    type: 'upload',
+    expires_at: Math.floor(Date.now() / 1000) + expiresInSeconds,
+  })
+}

@@ -33,8 +33,17 @@ export const listCourses: RequestHandler = asyncHandler(async (req: Request, res
 })
 
 export const getCourse: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
-  const course = await CourseService.getCourse(paramValue(req.params.courseId), req.user?.role === 'admin')
-  sendSuccess(res, { course }, 'Course retrieved successfully')
+  const result = await CourseService.getCourseDetail(paramValue(req.params.courseId), req.user?.role === 'admin')
+  sendSuccess(res, result, 'Course retrieved successfully')
+})
+
+export const getCourseVideo: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const video = await CourseService.getLessonVideo(
+    paramValue(req.params.courseId),
+    typeof req.query.lessonId === 'string' ? req.query.lessonId : '',
+    req.user
+  )
+  sendSuccess(res, video, 'Lesson video retrieved successfully')
 })
 
 export const updateCourse: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
