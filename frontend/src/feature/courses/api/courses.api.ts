@@ -1,6 +1,6 @@
 import { baseApi } from '../../../shared/state/baseApi'
 import type { APIResponse } from '../../../types/api.types'
-import type { ICourse } from '../../../types/course.types'
+import type { ICourse, ICourseDetail } from '../../../types/course.types'
 
 export interface CourseFilters {
   q?: string
@@ -40,12 +40,12 @@ export const coursesApi = baseApi.injectEndpoints({
       transformResponse: (response: APIResponse<CoursesResponse>) => response.data!,
       providesTags: ['Course'],
     }),
-    getCourseBySlug: builder.query<ICourse, string>({
+    getCourseBySlug: builder.query<ICourseDetail, string>({
       query: (slug) => ({
         url: `/courses/${slug}`,
         method: 'GET',
       }),
-      transformResponse: (response: APIResponse<{ course: ICourse }>) => response.data!.course,
+      transformResponse: (response: APIResponse<ICourseDetail>) => response.data!,
       providesTags: ['Course'],
     }),
   }),

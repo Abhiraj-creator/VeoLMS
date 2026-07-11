@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Clock3, PlayCircle, Tag } from 'lucide-react'
 import { ROUTES } from '../../../constants/routes'
-import { formatDuration, formatPrice } from '../../../utils/formatDuration'
+import { formatDuration } from '../../../utils/formatDuration'
+import { formatPrice } from '../../../utils/formatPrice'
 import type { ICourse } from '../../../types/course.types'
 import { cn } from '../../../utils/cn'
 

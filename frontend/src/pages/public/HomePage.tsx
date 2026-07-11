@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { ROUTES } from '../../constants/routes'
 import { CourseGrid } from '../../feature/courses/components/CourseGrid'
 import { useGetCoursesQuery } from '../../feature/courses/api/courses.api'
-import { formatPrice } from '../../utils/formatPrice'
 
 export default function HomePage() {
   const { data, isLoading } = useGetCoursesQuery({ limit: 6, page: 1 })

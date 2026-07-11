@@ -5,7 +5,6 @@ import { CourseSearchBar } from '../../feature/courses/components/CourseSearchBa
 import { CourseCategoryFilter } from '../../feature/courses/components/CourseCategoryFilter'
 import { useGetCoursesQuery } from '../../feature/courses/api/courses.api'
 import { useDebounce } from '../../shared/hooks/useDebounce'
-import type { CourseCategory, ICourse } from '../../types/course.types'
 
 export default function CoursesPage() {
   const [searchParams, setSearchParams] = useSearchParams()

@@ -47,3 +47,8 @@ export interface ICourse {
 export interface ICurriculum {
   sections: ISection[]
 }
+
+export interface ICourseDetail {
+  course: ICourse
+  curriculum: ISection[]
+}
