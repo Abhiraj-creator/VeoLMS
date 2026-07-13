@@ -61,3 +61,12 @@ a {
   background: var(--accent-soft);
   color: var(--text);
 }
+
+/* Plyr Custom Theme Overrides */
+.plyr {
+  --plyr-color-main: var(--accent) !important;
+  --plyr-video-background: #000000 !important;
+  --plyr-font-family: inherit !important;
+  border-radius: 0.75rem !important;
+}
+
