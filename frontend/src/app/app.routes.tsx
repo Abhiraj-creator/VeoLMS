@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from './App'
+import { AdminApp } from '../shared/components/guards/AdminApp'
 import { ProtectedRoute } from '../shared/components/guards/ProtectedRoute'
-import { AdminRoute } from '../shared/components/guards/AdminRoute'
 import HomePage from '../pages/public/HomePage'
 import LoginPage from '../pages/public/LoginPage'
 import SignupPage from '../pages/public/SignupPage'
@@ -18,6 +18,7 @@ import AdminEnrollmentsPage from '../pages/admin/AdminEnrollmentsPage'
 import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage'
 
 export const router = createBrowserRouter([
+  // ─── Public + Student routes (use public App shell with Navbar) ────────────
   {
     path: '/',
     element: <App />,
@@ -34,19 +35,22 @@ export const router = createBrowserRouter([
           { path: 'learn/:slug/:lessonId', element: <LearnPage /> },
         ],
       },
-      {
-        element: <AdminRoute />,
-        children: [
-          { path: 'admin', element: <AdminDashboardPage /> },
-          { path: 'admin/courses', element: <AdminCoursesPage /> },
-          { path: 'admin/courses/new', element: <AdminCourseFormPage /> },
-          { path: 'admin/courses/:courseId/edit', element: <AdminCourseFormPage /> },
-          { path: 'admin/students', element: <AdminStudentsPage /> },
-          { path: 'admin/enrollments', element: <AdminEnrollmentsPage /> },
-          { path: 'admin/analytics', element: <AdminAnalyticsPage /> },
-        ],
-      },
       { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+
+  // ─── Admin routes (standalone shell — no public Navbar) ────────────────────
+  {
+    path: '/admin',
+    element: <AdminApp />,
+    children: [
+      { index: true, element: <AdminDashboardPage /> },
+      { path: 'courses', element: <AdminCoursesPage /> },
+      { path: 'courses/new', element: <AdminCourseFormPage /> },
+      { path: 'courses/:courseId/edit', element: <AdminCourseFormPage /> },
+      { path: 'students', element: <AdminStudentsPage /> },
+      { path: 'enrollments', element: <AdminEnrollmentsPage /> },
+      { path: 'analytics', element: <AdminAnalyticsPage /> },
     ],
   },
 ])

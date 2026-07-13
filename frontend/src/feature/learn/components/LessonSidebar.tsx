@@ -23,19 +23,33 @@ export function LessonSidebar({
   onBackToDashboard,
 }: LessonSidebarProps) {
   // Store expanded sections by sectionId
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {}
+    if (sections && activeLessonId) {
+      const activeSection = sections.find((s) =>
+        s.lessons?.some((l) => l._id === activeLessonId)
+      )
+      if (activeSection) {
+        initial[activeSection._id] = true
+      }
+    }
+    return initial
+  })
 
-  // Auto-expand the section containing the active lesson on load
+  // Also auto-expand if the activeLessonId changes later
   useEffect(() => {
     if (!sections || !activeLessonId) return
     const activeSection = sections.find((s) =>
       s.lessons?.some((l) => l._id === activeLessonId)
     )
     if (activeSection) {
-      setExpandedSections((prev) => ({
-        ...prev,
-        [activeSection._id]: true,
-      }))
+      setExpandedSections((prev) => {
+        if (prev[activeSection._id]) return prev // avoid unnecessary render
+        return {
+          ...prev,
+          [activeSection._id]: true,
+        }
+      })
     }
   }, [sections, activeLessonId])
 

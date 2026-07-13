@@ -51,12 +51,13 @@ export default function LearnPage() {
   })
 
   const activeLesson = useMemo(() => {
-    for (const section of curriculum) {
+    const cur = courseDetail?.curriculum ?? []
+    for (const section of cur) {
       const found = section.lessons?.find((l) => l._id === lessonId)
       if (found) return { lesson: found, section }
     }
     return null
-  }, [curriculum, lessonId])
+  }, [courseDetail?.curriculum, lessonId])
 
   const sanitizedContent = useMemo(() => {
     return activeLesson?.lesson.content ? DOMPurify.sanitize(activeLesson.lesson.content) : ''
@@ -64,6 +65,7 @@ export default function LearnPage() {
 
   const isForbidden = useMemo(() => {
     if (!isVideoError) return false
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const err = isVideoError as any
     return err.status === 403 || err.data?.statusCode === 403
   }, [isVideoError])

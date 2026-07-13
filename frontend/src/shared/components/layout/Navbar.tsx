@@ -32,11 +32,12 @@ export function Navbar() {
   const navigate = useNavigate()
 
   const initials = useMemo(() => {
-    if (!user?.name) {
+    const name = user?.name
+    if (!name) {
       return 'VL'
     }
 
-    return user.name
+    return name
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)
