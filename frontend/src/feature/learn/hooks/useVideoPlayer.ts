@@ -31,15 +31,14 @@ export function useVideoPlayer({ courseSlug, lessonId }: UseVideoPlayerProps) {
       // Only seek if watched progress is less than 95% of total to avoid auto-completion loop
       if (watched > 0 && watched < total * 0.95) {
         const handleReady = () => {
-          // eslint-disable-next-line react-hooks/immutability
-          player.currentTime = watched
+          Object.assign(player, { currentTime: watched })
           isInitialSeekDone.current = true
         }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((player as any).ready) {
-          // eslint-disable-next-line react-hooks/immutability
-          player.currentTime = watched
+        const p: any = player
+        if (p.ready) {
+          Object.assign(player, { currentTime: watched })
           isInitialSeekDone.current = true
         } else {
           player.once('ready', handleReady)
@@ -48,7 +47,6 @@ export function useVideoPlayer({ courseSlug, lessonId }: UseVideoPlayerProps) {
         isInitialSeekDone.current = true
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player, progressData, lessonId])
 
   return {

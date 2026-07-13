@@ -43,6 +43,7 @@ export function LessonSidebar({
       s.lessons?.some((l) => l._id === activeLessonId)
     )
     if (activeSection) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setExpandedSections((prev) => {
         if (prev[activeSection._id]) return prev // avoid unnecessary render
         return {

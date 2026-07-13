@@ -50,14 +50,14 @@ export default function LearnPage() {
     isLessonCompleted: isActiveLessonCompleted,
   })
 
-  const activeLesson = useMemo(() => {
+  const activeLesson = (() => {
     const cur = courseDetail?.curriculum ?? []
     for (const section of cur) {
       const found = section.lessons?.find((l) => l._id === lessonId)
       if (found) return { lesson: found, section }
     }
     return null
-  }, [courseDetail?.curriculum, lessonId])
+  })()
 
   const sanitizedContent = useMemo(() => {
     return activeLesson?.lesson.content ? DOMPurify.sanitize(activeLesson.lesson.content) : ''
