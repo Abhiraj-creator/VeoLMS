@@ -7,6 +7,8 @@ import {
 } from '../../feature/admin/api/admin.api'
 import type { IUser } from '../../types/user.types'
 import type { IEnrollment } from '../../types/enrollment.types'
+import { EmptyState } from '../../shared/components/ui/EmptyState'
+
 
 // ─── Enrollment Detail Row ──────────────────────────────────────────────────
 
@@ -274,20 +276,24 @@ export default function AdminStudentsPage() {
         {isLoading ? (
           <TableSkeleton />
         ) : students.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="font-semibold text-[var(--text)]">No students found</p>
-            <p className="mt-1 text-sm text-[var(--muted)]">
-              {debouncedSearch ? `No results for "${debouncedSearch}". Try a different search.` : 'Students will appear here once they register.'}
-            </p>
+          <div className="p-4">
+            <EmptyState
+              title="No students found"
+              description={debouncedSearch ? `No results found for "${debouncedSearch}". Try clearing or changing your search term.` : 'Students will appear here once they register on the platform.'}
+              actionLabel={debouncedSearch ? "Clear Search" : undefined}
+              onAction={debouncedSearch ? () => setSearch('') : undefined}
+            />
           </div>
         ) : (
-          <table className="w-full">
-            <tbody>
-              {students.map((student) => (
-                <StudentRow key={student._id} student={student} />
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <tbody>
+                {students.map((student) => (
+                  <StudentRow key={student._id} student={student} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {/* Pagination */}

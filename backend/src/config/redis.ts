@@ -4,13 +4,13 @@ import { config } from './config'
 export const redisClient = new Redis(config.REDIS_URL, {
   retryStrategy: (times: number) => {
     if (times > 3) {
-      console.error('❌ Redis connection failed after 3 retries — exiting')
-      process.exit(1)
+      console.warn('⚠️ Redis connection failed after 3 retries — proceeding in dev mode')
+      return null
     }
     return Math.min(times * 200, 1000)
   },
   maxRetriesPerRequest: 3,
-  enableReadyCheck: true,
+  enableReadyCheck: false,
   lazyConnect: true,
 })
 
@@ -19,7 +19,7 @@ redisClient.on('connect', () => {
 })
 
 redisClient.on('error', (error) => {
-  console.error('❌ Redis error:', error.message)
+  console.warn('⚠️ Redis notice:', error.message)
 })
 
 redisClient.on('close', () => {
@@ -32,9 +32,7 @@ export async function connectRedis(): Promise<void> {
       await redisClient.connect()
     }
   } catch (error: any) {
-    if (error.message !== 'Redis is already connecting/connected') {
-      throw error
-    }
+    console.warn('⚠️ Redis connection failed (running without Redis cache):', error.message)
   }
 }
 

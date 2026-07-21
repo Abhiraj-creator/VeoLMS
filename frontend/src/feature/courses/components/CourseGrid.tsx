@@ -1,14 +1,16 @@
 import type { ICourse } from '../../../types/course.types'
 import { CourseCard } from './CourseCard'
 import { CourseCardSkeleton } from './CourseCardSkeleton'
+import { EmptyState } from '../../../shared/components/ui/EmptyState'
 
 interface CourseGridProps {
   courses?: ICourse[]
   isLoading?: boolean
   emptyMessage?: string
+  onResetFilters?: () => void
 }
 
-export function CourseGrid({ courses = [], isLoading = false, emptyMessage = 'No courses found for your search' }: CourseGridProps) {
+export function CourseGrid({ courses = [], isLoading = false, emptyMessage = 'No courses found for your search', onResetFilters }: CourseGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -21,11 +23,15 @@ export function CourseGrid({ courses = [], isLoading = false, emptyMessage = 'No
 
   if (courses.length === 0) {
     return (
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center text-[var(--muted)]">
-        {emptyMessage}
-      </div>
+      <EmptyState
+        title={emptyMessage}
+        description="Try adjusting your search query or selecting a different category filter."
+        actionLabel={onResetFilters ? "Reset Filters" : undefined}
+        onAction={onResetFilters}
+      />
     )
   }
+
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

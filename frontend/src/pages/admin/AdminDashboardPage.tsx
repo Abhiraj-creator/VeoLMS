@@ -114,68 +114,70 @@ export default function AdminDashboardPage() {
               No enrollments yet.
             </div>
           ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--surface-2)]">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                    Student
-                  </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                    Course
-                  </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                    Amount
-                  </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]">
-                {stats.recentEnrollments.map((enrollment) => (
-                  <tr
-                    key={enrollment._id}
-                    className="transition-colors hover:bg-[var(--surface-2)]"
-                  >
-                    <td className="px-5 py-4">
-                      <div>
-                        <p className="font-medium text-[var(--text)]">
-                          {enrollment.student.name}
-                        </p>
-                        <p className="text-xs text-[var(--muted)]">{enrollment.student.email}</p>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        {enrollment.course.thumbnailUrl ? (
-                          <img
-                            src={enrollment.course.thumbnailUrl}
-                            alt={enrollment.course.title}
-                            className="h-9 w-14 shrink-0 rounded-md object-cover"
-                          />
-                        ) : (
-                          <div className="grid h-9 w-14 shrink-0 place-items-center rounded-md bg-[var(--surface-3)]">
-                            <BookOpen className="h-4 w-4 text-[var(--muted)]" />
-                          </div>
-                        )}
-                        <span className="line-clamp-1 text-[var(--text)]">
-                          {enrollment.course.title}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-right font-medium text-[var(--accent)]">
-                      {formatCurrency(enrollment.amount)}
-                    </td>
-                    <td className="px-5 py-4 text-right text-[var(--muted)]">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        {formatDate(enrollment.enrolledAt)}
-                      </div>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-2)]">
+                    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                      Student
+                    </th>
+                    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                      Course
+                    </th>
+                    <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                      Amount
+                    </th>
+                    <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                      Date
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {stats.recentEnrollments.map((enrollment) => (
+                    <tr
+                      key={enrollment._id}
+                      className="transition-colors hover:bg-[var(--surface-2)]"
+                    >
+                      <td className="px-5 py-4">
+                        <div>
+                          <p className="font-medium text-[var(--text)]">
+                            {enrollment.student.name}
+                          </p>
+                          <p className="text-xs text-[var(--muted)]">{enrollment.student.email}</p>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          {enrollment.course.thumbnailUrl ? (
+                            <img
+                              src={enrollment.course.thumbnailUrl}
+                              alt={enrollment.course.title}
+                              className="h-9 w-14 shrink-0 rounded-md object-cover"
+                            />
+                          ) : (
+                            <div className="grid h-9 w-14 shrink-0 place-items-center rounded-md bg-[var(--surface-3)]">
+                              <BookOpen className="h-4 w-4 text-[var(--muted)]" />
+                            </div>
+                          )}
+                          <span className="line-clamp-1 text-[var(--text)]">
+                            {enrollment.course.title}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-right font-medium text-[var(--accent)]">
+                        {formatCurrency(enrollment.amount)}
+                      </td>
+                      <td className="px-5 py-4 text-right text-[var(--muted)]">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Clock className="h-3.5 w-3.5" />
+                          {formatDate(enrollment.enrolledAt)}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </section>
