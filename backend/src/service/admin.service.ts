@@ -102,8 +102,28 @@ export class AdminService {
     return { revenuePerCourse, enrollmentsByDay }
   }
 
-  static getAllStudents(query = '', page = 1, limit = 20) {
-    return UserDAO.findAllStudents(query, page, limit)
+  static async getAllStudents(query = '', page = 1, limit = 20) {
+    const { users, total } = await UserDAO.findAllStudents(query, page, limit)
+    const studentIds = users.map((user) => user._id)
+
+    const enrollmentCounts =
+      studentIds.length === 0
+        ? []
+        : await Enrollment.aggregate<{ _id: mongoose.Types.ObjectId; count: number }>([
+            { $match: { student: { $in: studentIds }, status: 'completed' } },
+            { $group: { _id: '$student', count: { $sum: 1 } } },
+          ])
+
+    const countByStudent = new Map(
+      enrollmentCounts.map((entry) => [entry._id.toString(), entry.count])
+    )
+
+    const usersWithEnrollmentCount = users.map((user) => ({
+      ...(typeof user.toObject === 'function' ? user.toObject() : user),
+      enrollmentCount: countByStudent.get(user._id.toString()) ?? 0,
+    }))
+
+    return { users: usersWithEnrollmentCount, total }
   }
 
   static getStudentEnrollments(studentId: string) {

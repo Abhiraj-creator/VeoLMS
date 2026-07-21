@@ -1,6 +1,6 @@
 import { baseApi } from '../../../shared/state/baseApi'
 import type { APIResponse } from '../../../types/api.types'
-import type { ICourse } from '../../../types/course.types'
+import type { ICourse, ISection, ILesson } from '../../../types/course.types'
 import type { IEnrollment } from '../../../types/enrollment.types'
 import type { IUser } from '../../../types/user.types'
 
@@ -46,14 +46,53 @@ export interface StudentsResponse {
 
 export interface CreateCoursePayload {
   title: string
+  slug: string
   category: ICourse['category']
   shortDescription: string
   description: string
   price: number
   tags?: string[]
+  thumbnailUrl?: string | null
+  thumbnailPublicId?: string | null
 }
 
 export type UpdateCoursePayload = Partial<CreateCoursePayload>
+
+export interface CreateSectionPayload {
+  courseId: string
+  title: string
+  order: number
+  isPublished?: boolean
+}
+
+export interface UpdateSectionPayload {
+  title?: string
+  order?: number
+  isPublished?: boolean
+}
+
+export interface CreateLessonPayload {
+  sectionId: string
+  title: string
+  content: string
+  videoUrl?: string | null
+  cloudinaryPublicId?: string | null
+  duration?: number
+  order: number
+  isPreview?: boolean
+  isPublished?: boolean
+}
+
+export interface UpdateLessonPayload {
+  title?: string
+  content?: string
+  videoUrl?: string | null
+  cloudinaryPublicId?: string | null
+  duration?: number
+  order?: number
+  isPreview?: boolean
+  isPublished?: boolean
+}
 
 // ─── Admin API ────────────────────────────────────────────────────────────────
 
@@ -62,14 +101,40 @@ export const adminApi = baseApi.injectEndpoints({
     // Stats
     getAdminStats: builder.query<AdminStats, void>({
       query: () => ({ url: '/admin/stats', method: 'GET' }),
-      transformResponse: (res: APIResponse<AdminStats>) => res.data!,
+      transformResponse: (res: APIResponse<{ stats: AdminStats }>) => res.data!.stats,
       providesTags: ['Admin'],
     }),
 
     // Analytics
     getAdminAnalytics: builder.query<AdminAnalytics, void>({
       query: () => ({ url: '/admin/analytics', method: 'GET' }),
-      transformResponse: (res: APIResponse<AdminAnalytics>) => res.data!,
+      transformResponse: (
+        res: APIResponse<{
+          analytics: {
+            revenuePerCourse: Array<{
+              courseId: string
+              title: string
+              revenue: number
+              enrollments: number
+            }>
+            enrollmentsByDay: Array<{ date: string; enrollments: number }>
+          }
+        }>
+      ) => {
+        const { analytics } = res.data!
+        return {
+          revenuePerCourse: analytics.revenuePerCourse.map((item) => ({
+            _id: item.courseId,
+            courseTitle: item.title,
+            totalRevenue: item.revenue,
+            enrollments: item.enrollments,
+          })),
+          enrollmentsByDay: analytics.enrollmentsByDay.map((item) => ({
+            date: item.date,
+            count: item.enrollments,
+          })),
+        }
+      },
       providesTags: ['Admin'],
     }),
 
@@ -89,7 +154,7 @@ export const adminApi = baseApi.injectEndpoints({
     // Student enrollments
     getStudentEnrollments: builder.query<IEnrollment[], string>({
       query: (studentId) => ({ url: `/admin/students/${studentId}/enrollments`, method: 'GET' }),
-      transformResponse: (res: APIResponse<IEnrollment[]>) => res.data!,
+      transformResponse: (res: APIResponse<{ enrollments: IEnrollment[] }>) => res.data!.enrollments,
       providesTags: ['Admin'],
     }),
 
@@ -116,6 +181,42 @@ export const adminApi = baseApi.injectEndpoints({
       transformResponse: (res: APIResponse<{ course: ICourse }>) => res.data!.course,
       invalidatesTags: ['Course', 'Admin'],
     }),
+
+    // Section mutations
+    createSection: builder.mutation<ISection, CreateSectionPayload>({
+      query: (body) => ({ url: '/sections', method: 'POST', body }),
+      transformResponse: (res: APIResponse<{ section: ISection }>) => res.data!.section,
+      invalidatesTags: ['Course'],
+    }),
+
+    updateSection: builder.mutation<ISection, { sectionId: string; data: UpdateSectionPayload }>({
+      query: ({ sectionId, data }) => ({ url: `/sections/${sectionId}`, method: 'PATCH', body: data }),
+      transformResponse: (res: APIResponse<{ section: ISection }>) => res.data!.section,
+      invalidatesTags: ['Course'],
+    }),
+
+    deleteSection: builder.mutation<void, string>({
+      query: (sectionId) => ({ url: `/sections/${sectionId}`, method: 'DELETE' }),
+      invalidatesTags: ['Course'],
+    }),
+
+    // Lesson mutations
+    createLesson: builder.mutation<ILesson, CreateLessonPayload>({
+      query: (body) => ({ url: '/lessons', method: 'POST', body }),
+      transformResponse: (res: APIResponse<{ lesson: ILesson }>) => res.data!.lesson,
+      invalidatesTags: ['Course'],
+    }),
+
+    updateLesson: builder.mutation<ILesson, { lessonId: string; data: UpdateLessonPayload }>({
+      query: ({ lessonId, data }) => ({ url: `/lessons/${lessonId}`, method: 'PATCH', body: data }),
+      transformResponse: (res: APIResponse<{ lesson: ILesson }>) => res.data!.lesson,
+      invalidatesTags: ['Course'],
+    }),
+
+    deleteLesson: builder.mutation<void, string>({
+      query: (lessonId) => ({ url: `/lessons/${lessonId}`, method: 'DELETE' }),
+      invalidatesTags: ['Course'],
+    }),
   }),
 })
 
@@ -128,4 +229,10 @@ export const {
   useUpdateCourseMutation,
   useDeleteCourseMutation,
   useTogglePublishCourseMutation,
+  useCreateSectionMutation,
+  useUpdateSectionMutation,
+  useDeleteSectionMutation,
+  useCreateLessonMutation,
+  useUpdateLessonMutation,
+  useDeleteLessonMutation,
 } = adminApi
